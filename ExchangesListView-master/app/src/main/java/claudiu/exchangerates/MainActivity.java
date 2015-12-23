@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     ExchangeDbHelper exchangeDbHelper;
     SQLiteDatabase sqLiteDatabase;
     Context context = this;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
         list = (ListView) findViewById(R.id.listView);
         tasks = new ArrayList<>();
-
     }
 
     public void populateListView() {
@@ -70,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -124,9 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     while (ma.find()) {
                         if (!(m.group(1).trim()).equals("timestamp")) {
                             str = (m.group(1) + " " + ma.group(1));
-                            //insert or update to DB
                             insertToDB(m.group(1), ma.group(1), exchangeDbHelper);
-                            //insert or update to DB
                             strAppend = strAppend + str + "\r\n";
                             finalList.add(str);
                         }
@@ -140,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void insertToDB(String exchangeName, String exchangeValue, ExchangeDbHelper exchangeDbHelper) {
 
-        sqLiteDatabase = exchangeDbHelper.getWritableDatabase();
-        exchangeDbHelper.insertInfo(exchangeName, exchangeValue, sqLiteDatabase);
+            sqLiteDatabase = exchangeDbHelper.getWritableDatabase();
+            exchangeDbHelper.insertInfo(exchangeName, exchangeValue, sqLiteDatabase);
     }
 
     protected boolean isOnline() {
@@ -169,8 +165,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            String content = HttpManager.getData(params[0]);
-
+            String content = null;
+            try {
+                content = OkHttpManager.run(params[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return content;
         }
 

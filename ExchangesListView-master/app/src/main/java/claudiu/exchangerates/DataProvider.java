@@ -17,8 +17,16 @@ public class DataProvider {
         return name;
     }
 
+    public void setExchangeName(String name) {
+        this.name = name;
+    }
+
     public String getExchangeValue() {
         return value;
+    }
+
+    public void setExchangeValue(String surname) {
+        this.value = surname;
     }
 
 

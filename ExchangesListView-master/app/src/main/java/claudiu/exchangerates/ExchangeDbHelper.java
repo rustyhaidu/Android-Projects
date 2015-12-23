@@ -46,49 +46,16 @@ public class ExchangeDbHelper extends SQLiteOpenHelper {
         cursor = db.query(ExchangeContract.TABLE_NAME, projections, null, null, null, null, null);
         return cursor;
     }
-
-    public String getExchange(String employeeName) {
-        String query = "Select " + ExchangeContract.EXCHANGE_VALUE + " FROM " + ExchangeContract.TABLE_NAME + " WHERE " + ExchangeContract.EXCHANGE_NAME + " =  \"" + employeeName + "\"";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        Cursor cursor = db.rawQuery(query, null);
-
-        String value = "-1";
-
-        if (cursor.moveToFirst()) {
-            cursor.moveToFirst();
-            value = cursor.getString(0);
-            cursor.close();
-        } else {
-            value = "-1";
-        }
-        db.close();
-        return value;
-    }
-
-    public void deleteTable() {
-        String query = "DELETE FROM " + ExchangeContract.TABLE_NAME;
+    public void deleteTable(){
+        String query = "DELETE FROM "+ ExchangeContract.TABLE_NAME;
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(query);
     }
-
-    public void deleteInformation(String employeeName, SQLiteDatabase sqLiteDatabase) {
-        String selection = ExchangeContract.EXCHANGE_NAME + " LIKE ?";
-        String[] selection_args = {employeeName};
-
-        sqLiteDatabase.delete(ExchangeContract.TABLE_NAME, selection, selection_args);
-
-    }
-
-    public void updateInformation(String exchangeName, String newExchangeValue) {
-        String query = "UPDATE " + ExchangeContract.TABLE_NAME + " SET " + ExchangeContract.EXCHANGE_VALUE + "=" + newExchangeValue + " WHERE " + ExchangeContract.EXCHANGE_NAME + " =  \"" + exchangeName + "\"";
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(query);
-    }
-
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + ExchangeContract.TABLE_NAME);
+        onCreate(db);
     }
+
 }
